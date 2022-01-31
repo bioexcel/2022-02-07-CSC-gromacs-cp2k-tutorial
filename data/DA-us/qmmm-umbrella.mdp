@@ -1,0 +1,71 @@
+title                    = QMMM-umbrella
+
+integrator               = md
+
+tinit                    = 0
+dt                       = 0.001
+nsteps                   = 100
+
+nstcomm                  = 1
+comm_grps                = system
+
+nstxout                  = 100
+nstvout                  = 100
+nstfout                  = 100
+nstlog                   = 1
+nstenergy                = 1
+nstxtcout                = 100
+xtc-precision            = 1000
+xtc_grps                 = system
+nstcalcenergy            = 1
+energy_grps              = 
+
+cutoff-scheme            = verlet
+nstlist                  = 10
+pbc                      = xyz
+periodic-molecules       = no
+verlet-buffer-tolerance  = 0.005
+rlist                    = 1.2
+
+coulombtype              = PME
+coulomb-modifier         = Potential-shift-Verlet
+rcoulomb-switch          = 1.0
+rcoulomb                 = 1.2
+vdwtype                  = Cut-off
+vdw-modifier             = Force-switch
+rvdw-switch              = 1.0
+rvdw                     = 1.2
+
+tcoupl                  = V-rescale             ; modified Berendsen thermostat
+tc-grps                 = System
+tau_t                   = 0.5    ; time constant, in ps
+ref_t                   = 300    ; reference temperature, one for each group, in K
+
+constraints              = none
+
+; GENERATE VELOCITIES FOR STARTUP RUN
+gen-vel                  = no
+gen-temp                 = 300 
+gen-seed                 = 123456
+
+; Pull code
+pull                    = yes
+pull_ncoords            = 1          ; only one reaction coordinate
+pull_ngroups            = 2          ; four groups defining one reaction coordinate
+pull_group1_name        = group1     ; atoms C2 and C3
+pull_group2_name        = group2     ; atoms CA and CD
+pull_coord1_type        = umbrella   ; harmonic potential
+pull_coord1_geometry    = distance
+pull_coord1_dim         = Y Y Y
+pull_coord1_groups      = 1 2
+pull-coord1-init	= 0.34
+pull_coord1_k           = 192000      ; kJ mol^-1 nm^-2
+pull-nstxout             = 1
+pull-nstfout             = 1
+
+
+qmmm-cp2k-active         = true
+qmmm-cp2k-qmgroup        = QMatoms
+qmmm-cp2k-qmmethod       = PBE
+qmmm-cp2k-qmcharge       = 0
+qmmm-cp2k-qmmultiplicity = 1
