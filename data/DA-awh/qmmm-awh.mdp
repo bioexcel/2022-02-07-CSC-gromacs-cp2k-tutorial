@@ -1,0 +1,89 @@
+title                    = QMMM-awh
+
+integrator               = md
+
+tinit                    = 0
+dt                       = 0.001
+nsteps                   = 100
+
+nstcomm                  = 1
+comm-grps                = system
+
+nstxout                  = 100
+nstvout                  = 100
+nstfout                  = 100
+nstlog                   = 1
+nstenergy                = 1
+nstxtcout                = 100
+xtc-precision            = 1000
+xtc-grps                 = system
+nstcalcenergy            = 1
+energy-grps              = 
+
+cutoff-scheme            = verlet
+nstlist                  = 10
+pbc                      = xyz
+periodic-molecules       = no
+verlet-buffer-tolerance  = 0.005
+rlist                    = 1.2
+
+coulombtype              = PME
+coulomb-modifier         = Potential-shift-Verlet
+rcoulomb-switch          = 1.0
+rcoulomb                 = 1.2
+vdwtype                  = Cut-off
+vdw-modifier             = Force-switch
+rvdw-switch              = 1.0
+rvdw                     = 1.2
+
+tcoupl                  = V-rescale     
+tc-grps                 = System
+tau_t                   = 0.1                  ; time constant, in ps
+ref_t                   = 300                  ; reference temperature, one for each group, in K
+
+constraints              = none
+
+; GENERATE VELOCITIES FOR STARTUP RUN
+gen-vel                  = no
+gen-temp                 = 300 
+gen-seed                 = 123456
+
+; Pull code
+pull                    = yes
+pull-ncoords            = 1                    ; only one reaction coordinate
+pull-ngroups            = 2                    ; four groups defining one reaction coordinate
+pull-group1-name        = group1               ; atoms C2 and C3
+pull-group2-name        = group2               ; atoms CA and CD
+pull-coord1-geometry    = distance
+pull-coord1-dim         = Y Y Y
+pull-coord1-groups      = 1 2
+pull-coord1-type         = external-potential  ; Apply the bias using an external module.
+pull-coord1-potential-provider = AWH           ; The external module is called AWH!
+
+pull-nstxout             = 1
+pull-nstfout             = 0
+
+awh                      = yes                 ; AWH on.
+awh-nstout               = 100                 ; Step interval for writing awh*.xvg files.
+awh-nbias                = 1                   ; One bias, could have multiple.
+awh1-ndim                = 1                   ; Dimensionality of the RC, each dimension per pull coordinate.
+awh1-target              = cut-off
+awh1-target-cutoff       = 400
+awh1-dim1-coord-index    = 1                   ; Map RC dimension to pull coordinate index (here 1-->3)
+awh1-dim1-start          = 0.145               ; Sampling interval min value (nm)
+awh1-dim1-end            = 0.4
+awh1-dim1-force-constant = 256000              ; Force constant of the harmonic potential (kJ/(mol*nm^2))
+awh1-dim1-diffusion      = 1e-2                ; Estimate of the diffusion (nm^2/ps)
+awh1-error-init          = 50                
+
+awh-nstsample            = 10
+awh-nsamples-update      = 10
+
+qmmm-cp2k-active         = true
+qmmm-cp2k-qmgroup        = QMatoms
+qmmm-cp2k-qmmethod       = PBE
+qmmm-cp2k-qmcharge       = 0
+qmmm-cp2k-qmmultiplicity = 1
+
+
+
