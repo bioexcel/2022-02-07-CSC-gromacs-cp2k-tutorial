@@ -1,0 +1,47 @@
+title                    = relaxed-surface
+
+integrator               = steep
+
+tinit                    = 0
+dt                       = 0.002
+nsteps                   = 100
+
+nstcomm                  = 1
+comm_grps                = system
+
+emtol                    = 100.0
+emstep                   = 0.0001
+
+nstxout                  = 1
+nstvout                  = 1
+nstfout                  = 1
+nstlog                   = 1
+nstenergy                = 1
+nstxtcout                = 1
+xtc-precision            = 1000
+xtc_grps                 = system
+energy_grps              = 
+
+nstlist                  = 10
+ns_type                  = grid
+pbc                      = xyz
+rlist                    = 1.0
+coulombtype              = PME
+rcoulomb-switch          = 1.0
+rcoulomb                 = 1.6
+
+vdwtype                  = Cut-off
+rvdw-switch              = 0
+rvdw                     = 1.6
+DispCorr                 = No
+
+constraints              = none
+
+qmmm-cp2k-active         = true
+qmmm-cp2k-qmgroup        = QMatoms
+qmmm-cp2k-qmmethod       = PBE
+qmmm-cp2k-qmcharge       = 0
+qmmm-cp2k-qmmultiplicity = 1
+
+
+

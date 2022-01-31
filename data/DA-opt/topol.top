@@ -1,0 +1,15 @@
+; dat_GMX.top created by acpype (v: 2021-02-05T22:15:50CET) on Wed Jan 19 21:43:58 2022
+
+[ defaults ]
+; nbfunc        comb-rule       gen-pairs       fudgeLJ fudgeQQ
+1               2               yes             0.5     0.8333
+
+; Include dat_GMX.itp topology
+#include "dat.itp"
+
+[ system ]
+ dat
+
+[ molecules ]
+; Compound        nmols
+ dat              1     
