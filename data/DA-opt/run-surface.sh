@@ -1,9 +1,21 @@
 #!/bin/bash
+#SBATCH --job-name=rsurface
+#SBATCH --partition=small
+#SBATCH --time=00:10:00
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=40
+#SBATCH --cpus-per-task=1
+#SBATCH --mem-per-cpu=2000
+#SBATCH --reservation=gmx1
 
-export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+unset SLURM_MEM_PER_NODE
+
+export OMP_NUM_THREADS=1
 export OMP_PLACES=cores
 export GMX_MAXBACKUP=-1
-export GMX_PULL_PARTICIPATE_ALL=1
+
+#module purge
+#module load gromacs-course/gromacs-cp2k
 
 # prepare directory for GROMACS run
 mkdir opt
@@ -24,17 +36,19 @@ do
    mkdir opt${d}
 
    # generate tpr using previous step coordinates
-   gmx_mpi_d grompp -f ../LT.mdp -p topol.top -c confout.gro -n ../index.ndx -o opt${d}/dat-opt${d}.tpr -maxwarn 10
+   gmx_cp2k grompp -f ../LT.mdp -p topol.top -c confout.gro -n ../index.ndx -o opt${d}/dat-opt${d}.tpr -maxwarn 10
 
    cd opt${d}
 
    # run GROMACS
-   srun gmx_mpi_d mdrun -s dat-opt${d}.tpr -v
+   srun gmx_cp2k mdrun -s dat-opt${d}.tpr -v
 
-   gmx_mpi_d distance -s *.tpr -f traj.trr -n ../../index.ndx -select "com of group 4 plus com of group 5" -oav -oall
-
-   # extract data to xvg file
-   echo -e "`tail -n1 dist.xvg | grep '.' | awk '{printf("%f\n",$2)}'`\t`grep 'Potential Energy  =' md.log | awk '{printf("%f\n",$4)}'`" >> ../rsurf.xvg
+   # extract data
+   gmx_cp2k distance -s *.tpr -f traj.trr -n ../../index.ndx -select "com of group 4 plus com of group 5" -oav -oall
+   gmx_cp2k energy << EOF
+12
+EOF
+   echo -e "`tail -n1 dist.xvg | grep '.' | awk '{printf("%f\n",$2)}'`\t`tail -n1 energy.xvg | awk '{printf("%f\n",$2)}'`" >> ../rsurf.xvg
 
    cp -f confout.gro ../
    

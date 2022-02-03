@@ -1,25 +1,18 @@
 #!/bin/bash
+#SBATCH --job-name=umbrella
+#SBATCH --partition=small
+#SBATCH --time=00:10:00
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=40
+#SBATCH --cpus-per-task=1
+#SBATCH --mem-per-cpu=2000
+#SBATCH --reservation=gmx1
 
-export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+unset SLURM_MEM_PER_NODE
+
+export OMP_NUM_THREADS=1
 export OMP_PLACES=cores
 export GMX_MAXBACKUP=-1
-export GMX_PULL_PARTICIPATE_ALL=1
 
-umbr=0.15
-
-for i in $(seq 0 1 20); do
-	mkdir us-window${i}
-        sed "s/@umbr@/${umbr}/" qmmm-umbrella.mdp > us-window${i}/qmmm-window${i}.mdp
-	cd us-window${i}
-
-	gmx_mpi_d grompp -f qmmm-window${i}.mdp -p ../topol.top -n ../index.ndx -o md-us${i}.tpr -c ../eq_gro/md_eq${i}.gro -maxwarn 10
-
-	srun gmx_mpi_d mdrun -s md-us${i}.tpr
-
-        cp pullx.xvg ../profile/pullx${i}.xvg
-        cp md-us${i}.tpr ../profile/md-us${i}.tpr
-	cd ../
-
-#	echo $i $umbr
-	umbr=$(echo "$umbr + 0.019" | bc -l)
-done
+# run GROMACS
+srun gmx_cp2k mdrun -s md-us10.tpr
