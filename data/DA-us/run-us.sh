@@ -6,6 +6,7 @@
 #SBATCH --tasks-per-node=40
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=2000
+#SBATCH --account=project_2003752
 #SBATCH --reservation=gmx1
 
 unset SLURM_MEM_PER_NODE
